@@ -13,4 +13,7 @@ public interface ILampSQLRepository extends JpaRepository<Lamp, Long> {
 
     @Query(value = "SELECT l FROM Lamp l WHERE lower(l.name) LIKE :keyword%")
     List<Lamp> search(@Param("keyword")String keyword);
+
+    @Query(value = "SELECT l FROM Lamp l ORDER BY l.price")
+    List<Lamp> findAllByOrderByPrice();
 }

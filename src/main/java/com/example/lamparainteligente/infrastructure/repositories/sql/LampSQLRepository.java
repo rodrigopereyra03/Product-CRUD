@@ -52,5 +52,10 @@ public class LampSQLRepository implements ILampRepository {
         return sqlRepository.search(keyword);
     }
 
+    @Override
+    public List<Lamp> findAllByOrderByPrice() {
+        return sqlRepository.findAllByOrderByPrice();
+    }
+
 
 }

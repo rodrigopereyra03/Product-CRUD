@@ -65,4 +65,11 @@ public class LampController {
         }
     }
 
+    //Ordenar productos por precio
+    @GetMapping(value = "/lamps/getAllByOrder")
+    public ResponseEntity<List<LampDto>> getAllLampsByOrdeByrPrice(){
+        return  ResponseEntity.status(HttpStatus.OK).body(service.getAllLampsOrderByPrice());
+
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.example.lamparainteligente.application.services;
 
 import com.example.lamparainteligente.api.dtos.LampDto;
+import com.example.lamparainteligente.domain.models.Lamp;
 
 import java.util.List;
 
@@ -17,4 +18,5 @@ public interface InterfaceLampService {
     public String deleteLamp(Long id);
 
     public List<LampDto> getLampByName(String keyword);
+    public List<LampDto> getAllLampsOrderByPrice();
 }

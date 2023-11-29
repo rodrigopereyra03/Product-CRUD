@@ -6,6 +6,7 @@ import com.example.lamparainteligente.api.mappers.LampMapper;
 import com.example.lamparainteligente.domain.models.Lamp;
 import com.example.lamparainteligente.infrastructure.repositories.ILampRepository;
 import com.example.lamparainteligente.application.services.InterfaceLampService;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -23,7 +24,9 @@ public class LampService implements InterfaceLampService {
     @Override
     public List<LampDto> getLamps() {
         List<Lamp> lamps = repository.findAll();
-        return lamps.stream().map(LampMapper::lampToDto).toList();
+        return lamps.stream()
+                .map(LampMapper::lampToDto)
+                .toList();
     }
 
     @Override
@@ -76,4 +79,12 @@ public class LampService implements InterfaceLampService {
         List<Lamp> lamps = repository.search(keyword.toLowerCase());
         return LampMapper.toDtoList(lamps);
     }
+
+    public List<LampDto> getAllLampsOrderByPrice() {
+        List<Lamp> lamps = repository.findAllByOrderByPrice();
+        return lamps.stream()
+                .map(LampMapper::lampToDto)
+                .toList();
+    }
+
 }

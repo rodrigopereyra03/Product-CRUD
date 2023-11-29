@@ -18,4 +18,6 @@ public interface ILampRepository {
 
     List<Lamp> search(String keyword);
 
+    List<Lamp> findAllByOrderByPrice();
+
 }
