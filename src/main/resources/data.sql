@@ -1,0 +1,11 @@
+/*Inserto los datos en la tabla lamps*/
+INSERT INTO lamp (id,name,description,price,amount) VALUES (91,'Lamp1','descripcion1',100,1)
+INSERT INTO lamp (id,name,description,price,amount) VALUES (92,'Lamp2','descripcion2',200,2)
+INSERT INTO lamp (id,name,description,price,amount) VALUES (93,'Lamp3','descripcion3',50,3)
+INSERT INTO lamp (id,name,description,price,amount) VALUES (94,'Lamp4','descripcion4',150,2)
+INSERT INTO lamp (id,name,description,price,amount) VALUES (95,'Lamp5','descripcion5',180,2)
+INSERT INTO lamp (id,name,description,price,amount) VALUES (96,'Lamp6','descripcion6',500,4)
+INSERT INTO lamp (id,name,description,price,amount) VALUES (97,'Lamp7','descripcion7',1000,10)
+INSERT INTO lamp (id,name,description,price,amount) VALUES (98,'Lamp8','descripcion8',1500,15)
+INSERT INTO lamp (id,name,description,price,amount) VALUES (99,'Lamp9','descripcion9',800,4)
+INSERT INTO lamp (id,name,description,price,amount) VALUES (100,'Lamp10','descripcion10',300,3)
