@@ -124,4 +124,36 @@ API Rest para operaciones CRUD sobre lamparas.
         "amount": 1
     }
   ]
-  
+
+### Obtener todos los productos ordenados por precio
+-- **URL:** `/api/lamps/getAllByOrder`
+- **Método HTTP:** GET
+- **Descripción:** Trae todas las lamparas ordenados por precio en forma ascendente
+- **Respuesta Exitosa:** Código de estado HTTP 200 OK
+
+  - **Respuesta de Ejemplo:**
+    ```json
+    [
+       {
+          "id": 93,
+          "name": "Lamp3",
+          "description": "descripcion3",
+          "price": 50.0,
+          "amount": 3
+      },
+      {
+          "id": 91,
+          "name": "Lamp1",
+          "description": "descripcion1",
+          "price": 100.0,
+          "amount": 1
+      },
+      {
+          "id": 94,
+          "name": "Lamp4",
+          "description": "descripcion4",
+          "price": 150.0,
+          "amount": 2
+      }
+       // Otras lamparas...
+    ]
