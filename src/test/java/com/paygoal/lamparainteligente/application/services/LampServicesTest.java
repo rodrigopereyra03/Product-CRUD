@@ -1,6 +1,7 @@
 package com.paygoal.lamparainteligente.application.services;
 
 import com.paygoal.lamparainteligente.api.dtos.LampDto;
+import com.paygoal.lamparainteligente.api.mappers.ILampMapper;
 import com.paygoal.lamparainteligente.application.services.impl.LampService;
 import com.paygoal.lamparainteligente.domain.exceptions.LampNotFoundException;
 import com.paygoal.lamparainteligente.domain.models.Lamp;
@@ -18,14 +19,15 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class LampServicesTest {
 
     @Mock
     private LampSQLRepository repository;
+
+    @Mock
+    private ILampMapper mapper;
 
     @InjectMocks
     private LampService service;
@@ -38,7 +40,8 @@ public class LampServicesTest {
         MockitoAnnotations.initMocks(this);
         lamp = new Lamp();
         lampDto = new LampDto();
-        service = new LampService(repository);
+        mapper = mock(ILampMapper.class);
+        service = new LampService(repository, mapper);
     }
 
     @Test
@@ -49,40 +52,84 @@ public class LampServicesTest {
     @Test
     void getLampById(){
         Long id = 1L;
-        lamp.setId(id);
+        Lamp lamp = new Lamp();
+        LampDto lampDto = new LampDto();
+
+
         when(repository.findById(id)).thenReturn(lamp);
-        assertNotNull(service.getLampById(id));
+
+
+        when(mapper.lampToLampDto(lamp)).thenReturn(lampDto);
+
+        // Ejecuta el método
+        LampDto result = service.getLampById(id);
+
+        // Assertions
+        assertNotNull(result);
+        assertEquals(lampDto, result);
+
+
+        verify(mapper, times(1)).lampToLampDto(lamp);
     }
 
     @Test
     void testCreateLamp(){
-        when(repository.save(any(Lamp.class))).thenReturn(new Lamp());
-        assertNotNull(service.createLamp(lampDto));
+        // Datos de prueba
+        LampDto lampDto = new LampDto();
+        Lamp lamp = new Lamp();
+        Lamp savedLamp = new Lamp();
+        LampDto savedLampDto = new LampDto();
+
+        // Configura el comportamiento del mapper
+        when(mapper.LampDtoToLamp(lampDto)).thenReturn(lamp);
+        when(mapper.lampToLampDto(savedLamp)).thenReturn(savedLampDto);
+
+        // Configura el comportamiento del repositorio
+        when(repository.save(lamp)).thenReturn(savedLamp);
+
+        // Ejecuta el método
+        LampDto result = service.createLamp(lampDto);
+
+        // Assertions
+        assertNotNull(result);
+        assertEquals(savedLampDto, result);
+
+        // Verifica que el método del mapper se haya llamado una vez
+        verify(mapper, times(1)).LampDtoToLamp(lampDto);
+        verify(mapper, times(1)).lampToLampDto(savedLamp);
+        // Verifica que el método save del repositorio se haya llamado una vez
+        verify(repository, times(1)).save(lamp);
     }
 
     @Test
     void testUpdateLamp(){
-        Lamp existingLamp =new Lamp();
-        existingLamp.setId(1L);
-        existingLamp.setName("OldName");
-        existingLamp.setDescription("OldDescription");
-        existingLamp.setPrice(50.0);
-        existingLamp.setAmount(2);
-        when(repository.findById(1L)).thenReturn(existingLamp);
-        when(repository.save(existingLamp)).thenReturn(existingLamp);
+        // Datos de prueba
+        Long id = 1L;
+        LampDto lampDto = new LampDto(id, "Updated Lamp", "Updated Description", 20.0, 5);
+        Lamp existingLamp = new Lamp();
+        Lamp updatedLamp = new Lamp();
+        LampDto updatedLampDto = new LampDto();
 
-        lampDto.setId(1L);
-        lampDto.setName("NewName");
-        lampDto.setDescription("NewDescription");
-        lampDto.setPrice(123.45);
-        lampDto.setAmount(1234);
-        LampDto result =service.updateLamp(lampDto);
+        // Configura el comportamiento del mapper
+        when(mapper.lampToLampDto(updatedLamp)).thenReturn(updatedLampDto);
 
-        assertEquals(lampDto.getName(), result.getName());
-        assertEquals(lampDto.getDescription(), result.getDescription());
-        assertEquals(lampDto.getPrice(), result.getPrice());
-        assertEquals(1234,result.getAmount());
-        verify(repository, times(1)).save(any(Lamp.class));
+        // Configura el comportamiento del repositorio
+        when(repository.findById(id)).thenReturn(existingLamp);
+        when(repository.save(any())).thenReturn(updatedLamp);
+
+        // Ejecuta el método
+        LampDto result = service.updateLamp(lampDto);
+
+        // Assertions
+        assertNotNull(result);
+        assertEquals(updatedLampDto, result);
+
+        // Verifica que el método findById del repositorio se haya llamado una vez
+        verify(repository, times(1)).findById(id);
+        // Verifica que el método save del repositorio se haya llamado una vez
+        verify(repository, times(1)).save(any());
+        // Verifica que el método lampToLampDto del mapper se haya llamado una vez
+        verify(mapper, times(1)).lampToLampDto(updatedLamp);
     }
 
     @Test
@@ -115,5 +162,49 @@ public class LampServicesTest {
         when(repository.search(name)).thenReturn(lamps);
         List<LampDto> lampDtos =service.getLampByName(name);
         assertNotNull(lampDtos);
+    }
+
+    @Test
+    void testGetAllLampsOrderByPrice(){
+        // Datos de prueba
+        List<Lamp> mockedLamps = Arrays.asList(
+                new Lamp(),
+                new Lamp()
+                // ... más lámparas ...
+        );
+
+        List<LampDto> expectedLampDtos = Arrays.asList(
+                new LampDto(),
+                new LampDto()
+                // ... más lámparas ...
+        );
+
+        // Configura el comportamiento del repositorio
+        when(repository.findAllByOrderByPrice()).thenReturn(mockedLamps);
+
+        // Configura el comportamiento del mapper
+        when(mapper.lampToLampDto(any())).thenAnswer(invocation -> {
+            Lamp lamp = invocation.getArgument(0);
+            // Simula la lógica de mapeo
+            return new LampDto(/* mapped details based on lamp */);
+        });
+
+        // Ejecuta el método
+        List<LampDto> result = service.getAllLampsOrderByPrice();
+
+        // Assertions
+        assertNotNull(result);
+        assertEquals(expectedLampDtos.size(), result.size());
+
+        // Verifica que los detalles de cada LampDto sean iguales
+        for (int i = 0; i < expectedLampDtos.size(); i++) {
+            assertEquals(expectedLampDtos.get(i), result.get(i));
+        }
+
+        // Verifica que el método findAllByOrderByPrice del repositorio se haya llamado una vez
+        verify(repository, times(1)).findAllByOrderByPrice();
+        // Verifica que el método lampToLampDto del mapper se haya llamado por cada lámpara
+        verify(mapper, times(mockedLamps.size())).lampToLampDto(any());
+
     }
 }

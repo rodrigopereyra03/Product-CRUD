@@ -2,12 +2,10 @@ package com.paygoal.lamparainteligente.api.dtos;
 
 import lombok.*;
 
-@Builder
-@Getter
-@Setter
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
-@EqualsAndHashCode
+@AllArgsConstructor
+@Builder
 public class LampDto {
     private Long id;
     private String name;
